@@ -1,7 +1,7 @@
 require "mysql2"
 
 def cleaning(client)
-  client.query("select id, lastname, email, email2 from people_luiz").each do |hash|
+  client.query("select id, lastname, email, email2 from people_luiz;").each do |hash|
     lastname = hash['lastname'].to_s.count("editted") > 0 ? lastname = hash['lastname'].to_s.delete("editted ") : lastname = "#{hash['lastname'].to_s} editted"
     email = hash['email'].downcase.gsub("'", "")
     email2 = hash['email2'].downcase.gsub("'", "")
