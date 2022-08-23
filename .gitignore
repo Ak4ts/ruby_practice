@@ -1,7 +1,5 @@
 Gemfile.lock
 .env
-.xml
+
 # Ignore RubyMine's files
 /.idea
-# Project exclude paths
-/vendor/bundle/ruby/2.7.0/cache/
