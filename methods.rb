@@ -80,3 +80,37 @@ def get_teachers_by_year(year, client)
   end
   str
 end
+
+
+def random_date(date_begin, date_end)
+  db = date_begin.split("-")
+  de = date_end.split("-")
+  year = rand(db[0].to_i..de[0].to_i)
+  month = rand(1..12)
+  day = rand(1..31)
+  if month == 2
+    while day >28 
+      day-=1 
+    end
+  elsif month == 4 or month == 6 or month == 9 or month == 11 
+    while day >30 
+      day-=1 
+    end
+  end
+  puts rand(db[1].to_i..de[1].to_i)
+  str = "#{year}-#{month}-#{day}"
+end
+
+def random_last_names(n, client)
+  q = "SELECT last_name FROM last_names ORDER BY RAND() LIMIT #{n}"
+  lastnames = client.query(q).to_a
+end
+
+def random_first_names(n, client)
+  q = "SELECT m.FirstName as males, f.names as females 
+  FROM male_names m 
+  JOIN female_names f
+  ORDER BY RAND() 
+  LIMIT #{n}"
+  names = client.query(q).to_a
+end

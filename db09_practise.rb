@@ -12,4 +12,8 @@ client = Mysql2::Client.new(host: "db09.blockshopper.com", username: ENV['DB09_L
 # puts get_class_info(2, client)
 # puts get_teachers_by_year(2000, client)
 
+# puts random_date("1000-20-30", "1500-10-20")
+# puts random_last_names(10, client)
+# puts random_first_names(10, client)
+
 client.close
