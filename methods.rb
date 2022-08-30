@@ -82,35 +82,42 @@ def get_teachers_by_year(year, client)
 end
 
 
-def random_date(date_begin, date_end)
-  db = date_begin.split("-")
-  de = date_end.split("-")
-  year = rand(db[0].to_i..de[0].to_i)
-  month = rand(1..12)
-  day = rand(1..31)
-  if month == 2
-    while day >28 
-      day-=1 
-    end
-  elsif month == 4 or month == 6 or month == 9 or month == 11 
-    while day >30 
-      day-=1 
-    end
-  end
-  puts rand(db[1].to_i..de[1].to_i)
-  str = "#{year}-#{month}-#{day}"
+def random_date(begin_date, end_date)
+  rand(Date.parse(date_begin)..Date.parse(date_end))
 end
 
 def random_last_names(n, client)
+  lastnames = []
   q = "SELECT last_name FROM last_names ORDER BY RAND() LIMIT #{n}"
-  lastnames = client.query(q).to_a
+  client.query(q).each{ |l| lastnames.push l['last_name']}
+  lastnames
 end
 
 def random_first_names(n, client)
-  q = "SELECT m.FirstName as males, f.names as females 
+  names = []
+  q = "SELECT m.FirstName as names, f.names as names 
   FROM male_names m 
   JOIN female_names f
   ORDER BY RAND() 
   LIMIT #{n}"
-  names = client.query(q).to_a
+  client.query(q).each{ |n| names.push n['names']; names.push n['names']}
+  names
+end
+
+def generating_random_people(client)
+  fnames = random_first_names(5000, client)
+  lnames = random_last_names(600, client)
+  fnames.each do |fname|
+    q = "INSERT INTO random_people_luiz (first_name, last_name, birth_date) VALUES ('#{fname}', '#{lnames[rand(1..600)]}', '#{rand(1920..2022)}-#{rand(1..12)}-#{rand(1..28)}') "
+    client.query(q)
+  end
+end
+
+def random_people(n, client)
+  if n <= 20000
+     generating_random_people(client)
+  else
+     random_people(20000, client)
+     random_people(n - 20000, client)
+  end
 end

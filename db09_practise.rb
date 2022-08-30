@@ -16,4 +16,12 @@ client = Mysql2::Client.new(host: "db09.blockshopper.com", username: ENV['DB09_L
 # puts random_last_names(10, client)
 # puts random_first_names(10, client)
 
+t = Time.now
+1.times do
+  puts t
+  random_people(20, client)
+  puts "Done!!"
+end
+puts Time.now - t
+
 client.close
