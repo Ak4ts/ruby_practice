@@ -1,6 +1,7 @@
 require 'mysql2'
 require 'dotenv/load'
 require_relative 'methods.rb'
+require_relative 'cleaning.rb'
 
 client = Mysql2::Client.new(host: "db09.blockshopper.com", username: ENV['DB09_LGN'], password: ENV['DB09_PWD'], database: "applicant_tests")
 
@@ -16,12 +17,14 @@ client = Mysql2::Client.new(host: "db09.blockshopper.com", username: ENV['DB09_L
 # puts random_last_names(10, client)
 # puts random_first_names(10, client)
 
-t = Time.now
-1.times do
-  puts t
-  generating_random_people(client)
-  puts "Done!!"
-end
-puts Time.now - t
+# t = Time.now
+# 1.times do
+#   puts t
+#   generating_random_people(client)
+#   puts "Done!!"
+# end
+# puts Time.now - t
+
+cleaning_montana_district_report_card(client)
 
 client.close
