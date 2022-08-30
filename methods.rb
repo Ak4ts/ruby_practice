@@ -105,19 +105,11 @@ def random_first_names(n, client)
 end
 
 def generating_random_people(client)
+  # 5,000 male names and 5,000 female names, totalizing 10,000
   fnames = random_first_names(5000, client)
   lnames = random_last_names(600, client)
   fnames.each do |fname|
     q = "INSERT INTO random_people_luiz (first_name, last_name, birth_date) VALUES ('#{fname}', '#{lnames[rand(1..600)]}', '#{rand(1920..2022)}-#{rand(1..12)}-#{rand(1..28)}') "
     client.query(q)
-  end
-end
-
-def random_people(n, client)
-  if n <= 20000
-     generating_random_people(client)
-  else
-     random_people(20000, client)
-     random_people(n - 20000, client)
   end
 end
