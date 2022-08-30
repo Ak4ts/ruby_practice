@@ -19,7 +19,9 @@ def cleaning_montana_district_report_card(client)
       name = district['name'].
         gsub(' Elem', ' Elementary School').
         gsub(' H S', ' High School').
+        gsub(' HS', ' High School',).
         gsub(' K-12 Schools', ' Public School').
+        gsub(' K-12 Schls', ' Public School').
         gsub(' K-12', ' Public School') + " District"
       client.query("UPDATE montana_public_district_report_card__uniq_dist_luiz SET clean_name = '#{name}' WHERE id=#{district['id']}")
     end
@@ -33,7 +35,9 @@ def cleaning_montana_district_report_card(client)
       name = district['name'].
         gsub(' Elem', ' Elementary School').
         gsub(' H S', ' High School').
+        gsub(' HS', ' High School',).
         gsub(' K-12 Schools', ' Public School').
+        gsub(' K-12 Schls', ' Public School').
         gsub(' K-12', ' Public School') + " District"
       client.query("UPDATE montana_public_district_report_card__uniq_dist_luiz SET clean_name = '#{name}' WHERE id=#{district['id']}")
     end
