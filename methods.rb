@@ -134,36 +134,42 @@ def today(client)
       gsub(".", "").
       gsub("'", "''")
 
-      yes = 0
-      clean_name.split(" ").each do |name|
-        if name.include? "/"
-          obj = []
-          name.split("/").each do |n|
-            obj.push n
+      comma = 0
+      slash_name = ""
+      clean_name.split("/").each_with_index do |slashed, index|
+        if(index.to_i == 0)
+          
+          slashed.split(" ").each do |name|
+            if name.include? ","
+              comma += 1
+              slash.push name.downcase
+            elsif comma > 0
+              slash.push name
+            else
+              slash.push name.downcase
+            end
+            
           end
-          obj[0] = obj[0].downcase
-          obj.reverse.each do |n|
-            slash.push n
-          end
-        elsif name.include? ","
-          yes += 1
-          slash.push name.downcase
-        elsif yes > 0
-          slash.push name
         else
-          slash.push name.downcase
+          slash_name = slashed
         end
-
       end
-      if( yes > 0)
+
+      if( comma > 0)
         slash.push ")"
       end
       clean_name = slash.join(" ").gsub(", ", " (").gsub(" )", ")")
+      allName = ""
+      if slash_name.length > 0
+        allName = "#{slash_name} #{clean_name}"
+      else
+        allName = clean_name
+      end
 
-      sentence = "The candidate is running for the #{clean_name} office."
+      sentence = "The candidate is running for the #{allName} office."
       q = "
         UPDATE hle_dev_test_luiz 
-        SET clean_name = '#{clean_name}', sentence = '#{sentence}'
+        SET clean_name = '#{allName}', sentence = '#{sentence}'
         WHERE id = #{id}
       "
       client.query(q)
@@ -181,36 +187,42 @@ def today(client)
       gsub(".", "").
       gsub("'", "''")
 
-      yes = 0
-      clean_name.split(" ").each do |name|
-        if name.include? "/"
-          obj = []
-          name.split("/").each do |n|
-            obj.push n
+      comma = 0
+      slash_name = ""
+      clean_name.split("/").each_with_index do |slashed, index|
+        if(index.to_i == 0)
+          
+          slashed.split(" ").each do |name|
+            if name.include? ","
+              comma += 1
+              slash.push name.downcase
+            elsif comma > 0
+              slash.push name
+            else
+              slash.push name.downcase
+            end
+            
           end
-          obj[0] = obj[0].downcase
-          obj.reverse.each do |n|
-            slash.push n
-          end
-        elsif name.include? ","
-          yes += 1
-          slash.push name.downcase
-        elsif yes > 0
-          slash.push name
         else
-          slash.push name.downcase
+          slash_name = slashed
         end
-
       end
-      if( yes > 0)
+
+      if( comma > 0)
         slash.push ")"
       end
       clean_name = slash.join(" ").gsub(", ", " (").gsub(" )", ")")
+      allName = ""
+      if slash_name.length > 0
+        allName = "#{slash_name} #{clean_name}"
+      else
+        allName = clean_name
+      end
 
-      sentence = "The candidate is running for the #{clean_name} office."
+      sentence = "The candidate is running for the #{allName} office."
       q = "
         UPDATE hle_dev_test_luiz 
-        SET clean_name = '#{clean_name}', sentence = '#{sentence}'
+        SET clean_name = '#{allName}', sentence = '#{sentence}'
         WHERE id = #{id}
       "
       client.query(q)
