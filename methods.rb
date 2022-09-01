@@ -166,6 +166,10 @@ def today(client)
         allName = clean_name
       end
 
+      allName.split.each do |name|
+        allName = allName.gsub("#{name} #{name.downcase}", "#{name}")
+      end
+
       sentence = "The candidate is running for the #{allName} office."
       q = "
         UPDATE hle_dev_test_luiz 
@@ -217,6 +221,10 @@ def today(client)
         allName = "#{slash_name} #{clean_name}"
       else
         allName = clean_name
+      end
+
+      allName.split.each do |name|
+        allName = allName.gsub("#{name} #{name.downcase}", "#{name}")
       end
 
       sentence = "The candidate is running for the #{allName} office."
