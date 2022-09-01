@@ -113,3 +113,108 @@ def generating_random_people(client)
     client.query(q)
   end
 end
+
+def today(client)
+  begin
+    q = "CREATE TABLE hle_dev_test_luiz
+        AS SELECT * FROM hle_dev_test_candidates;"
+    client.query(q)
+    q = "ALTER TABLE hle_dev_test_luiz ADD clean_name VARCHAR(255), ADD sentence VARCHAR(255)"
+    client.query(q)
+  rescue => exception
+    puts "Table Already Exists"
+    q = "SELECT * FROM hle_dev_test_luiz"
+    result = client.query(q).to_a
+    result.each do |candidate|
+      slash = []
+      id = candidate['id']
+      clean_name = candidate['candidate_office_name'].gsub("County Clerk/Recorder/DeKalb County", "DeKalb County clerk and recorder").
+      gsub("Twp", "Township").
+      gsub("Hwy", "Highway").
+      gsub(".", "").
+      gsub("'", "''")
+
+      yes = 0
+      clean_name.split(" ").each do |name|
+        if name.include? "/"
+          obj = []
+          name.split("/").each do |n|
+            obj.push n
+          end
+          obj[0] = obj[0].downcase
+          obj.reverse.each do |n|
+            slash.push n
+          end
+        elsif name.include? ","
+          yes += 1
+          slash.push name.downcase
+        elsif yes > 0
+          slash.push name
+        else
+          slash.push name.downcase
+        end
+
+      end
+      if( yes > 0)
+        slash.push ")"
+      end
+      clean_name = slash.join(" ").gsub(", ", " (").gsub(" )", ")")
+
+      sentence = "The candidate is running for the #{clean_name} office."
+      q = "
+        UPDATE hle_dev_test_luiz 
+        SET clean_name = '#{clean_name}', sentence = '#{sentence}'
+        WHERE id = #{id}
+      "
+      client.query(q)
+    end
+    puts "Done!!"
+  else
+    q = "SELECT * FROM hle_dev_test_luiz"
+    result = client.query(q).to_a
+    result.each do |candidate|
+      slash = []
+      id = candidate['id']
+      clean_name = candidate['candidate_office_name'].gsub("County Clerk/Recorder/DeKalb County", "DeKalb County clerk and recorder").
+      gsub("Twp", "Township").
+      gsub("Hwy", "Highway").
+      gsub(".", "").
+      gsub("'", "''")
+
+      yes = 0
+      clean_name.split(" ").each do |name|
+        if name.include? "/"
+          obj = []
+          name.split("/").each do |n|
+            obj.push n
+          end
+          obj[0] = obj[0].downcase
+          obj.reverse.each do |n|
+            slash.push n
+          end
+        elsif name.include? ","
+          yes += 1
+          slash.push name.downcase
+        elsif yes > 0
+          slash.push name
+        else
+          slash.push name.downcase
+        end
+
+      end
+      if( yes > 0)
+        slash.push ")"
+      end
+      clean_name = slash.join(" ").gsub(", ", " (").gsub(" )", ")")
+
+      sentence = "The candidate is running for the #{clean_name} office."
+      q = "
+        UPDATE hle_dev_test_luiz 
+        SET clean_name = '#{clean_name}', sentence = '#{sentence}'
+        WHERE id = #{id}
+      "
+      client.query(q)
+    end
+    puts "Done!!"
+  end
+end

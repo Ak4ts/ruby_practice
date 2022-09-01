@@ -25,6 +25,8 @@ client = Mysql2::Client.new(host: "db09.blockshopper.com", username: ENV['DB09_L
 # end
 # puts Time.now - t
 
-cleaning_montana_district_report_card(client)
+#cleaning_montana_district_report_card(client)
+
+today(client)
 
 client.close
