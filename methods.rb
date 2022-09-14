@@ -114,12 +114,21 @@ def generating_random_people(client)
   end
 end
 
-def today(client)
+def hle_dev_test_candidates(client)
   begin
     q = "CREATE TABLE hle_dev_test_luiz
         AS SELECT * FROM hle_dev_test_candidates;"
     client.query(q)
     q = "ALTER TABLE hle_dev_test_luiz ADD clean_name VARCHAR(255), ADD sentence VARCHAR(255)"
+    client.query(q)
+    q = "SELECT id FROM hle_dev_test_luiz WHERE candidate_office_name IN ('', 'none given', 'unknown');"
+    ids = client.query(q).to_a
+    id = ''
+    ids.each do |i|
+      id += "#{i['id']},"
+    end
+    
+    q = "DELETE FROM hle_dev_test_luiz WHERE id IN (#{id[0...-1]})"
     client.query(q)
   rescue => exception
     puts "Table Already Exists"
@@ -128,52 +137,54 @@ def today(client)
     result.each do |candidate|
       slash = []
       id = candidate['id']
-      clean_name = candidate['candidate_office_name'].gsub("County Clerk/Recorder/DeKalb County", "DeKalb County clerk and recorder").
+      clean_name = candidate['candidate_office_name'].
       gsub("Twp", "Township").
       gsub("Hwy", "Highway").
       gsub(".", "").
       gsub("'", "''")
-
-      comma = 0
-      slash_name = ""
-      clean_name.split("/").each_with_index do |slashed, index|
-        if(index.to_i == 0)
-          
-          slashed.split(" ").each do |name|
-            if name.include? ","
-              comma += 1
-              slash.push name.downcase
-            elsif comma > 0
-              slash.push name
-            else
-              slash.push name.downcase
-            end
+      if candidate['candidate_office_name'] == "County Clerk/Recorder/DeKalb County"
+        allName = candidate['candidate_office_name'].gsub("County Clerk/Recorder/DeKalb County", "DeKalb County clerk and recorder")
+      else
+        comma = 0
+        slash_name = ""
+        clean_name.split("/").each_with_index do |slashed, index|
+          if(index.to_i == 0)
             
+            slashed.split(" ").each do |name|
+              if name.include? ","
+                comma += 1
+                slash.push name.downcase
+              elsif comma > 0
+                slash.push name
+              else
+                slash.push name.downcase
+              end
+              
+            end
+          else
+            slash_name = slashed
           end
+        end
+
+        if( comma > 0)
+          slash.push ")"
+        end
+        clean_name = slash.join(" ").gsub(", ", " (").gsub(" )", ")")
+        allName = ""
+        if slash_name.length > 0
+          allName = "#{slash_name} #{clean_name}"
         else
-          slash_name = slashed
+          allName = clean_name
+        end
+
+        allName.split.each do |name|
+          allName = allName.gsub("#{name} #{name.downcase} ", "#{name} ")
         end
       end
-
-      if( comma > 0)
-        slash.push ")"
-      end
-      clean_name = slash.join(" ").gsub(", ", " (").gsub(" )", ")")
-      allName = ""
-      if slash_name.length > 0
-        allName = "#{slash_name} #{clean_name}"
-      else
-        allName = clean_name
-      end
-
-      allName.split.each do |name|
-        allName = allName.gsub("#{name} #{name.downcase}", "#{name}")
-      end
-
       sentence = "The candidate is running for the #{allName} office."
       q = "
         UPDATE hle_dev_test_luiz 
-        SET clean_name = '#{allName}', sentence = '#{sentence}'
+        SET clean_name = '#{allName.strip}', sentence = '#{sentence.strip}'
         WHERE id = #{id}
       "
       client.query(q)
@@ -185,52 +196,54 @@ def today(client)
     result.each do |candidate|
       slash = []
       id = candidate['id']
-      clean_name = candidate['candidate_office_name'].gsub("County Clerk/Recorder/DeKalb County", "DeKalb County clerk and recorder").
+      clean_name = candidate['candidate_office_name'].
       gsub("Twp", "Township").
       gsub("Hwy", "Highway").
       gsub(".", "").
       gsub("'", "''")
-
-      comma = 0
-      slash_name = ""
-      clean_name.split("/").each_with_index do |slashed, index|
-        if(index.to_i == 0)
-          
-          slashed.split(" ").each do |name|
-            if name.include? ","
-              comma += 1
-              slash.push name.downcase
-            elsif comma > 0
-              slash.push name
-            else
-              slash.push name.downcase
-            end
+      if candidate['candidate_office_name'] == "County Clerk/Recorder/DeKalb County"
+        allName = candidate['candidate_office_name'].gsub("County Clerk/Recorder/DeKalb County", "DeKalb County clerk and recorder")
+      else
+        comma = 0
+        slash_name = ""
+        clean_name.split("/").each_with_index do |slashed, index|
+          if(index.to_i == 0)
             
+            slashed.split(" ").each do |name|
+              if name.include? ","
+                comma += 1
+                slash.push name.downcase
+              elsif comma > 0
+                slash.push name
+              else
+                slash.push name.downcase
+              end
+              
+            end
+          else
+            slash_name = slashed
           end
+        end
+
+        if( comma > 0)
+          slash.push ")"
+        end
+        clean_name = slash.join(" ").gsub(", ", " (").gsub(" )", ")")
+        allName = ""
+        if slash_name.length > 0
+          allName = "#{slash_name} #{clean_name}"
         else
-          slash_name = slashed
+          allName = clean_name
+        end
+
+        allName.split.each do |name|
+          allName = allName.gsub("#{name} #{name.downcase} ", "#{name} ")
         end
       end
-
-      if( comma > 0)
-        slash.push ")"
-      end
-      clean_name = slash.join(" ").gsub(", ", " (").gsub(" )", ")")
-      allName = ""
-      if slash_name.length > 0
-        allName = "#{slash_name} #{clean_name}"
-      else
-        allName = clean_name
-      end
-
-      allName.split.each do |name|
-        allName = allName.gsub("#{name} #{name.downcase}", "#{name}")
-      end
-
       sentence = "The candidate is running for the #{allName} office."
       q = "
         UPDATE hle_dev_test_luiz 
-        SET clean_name = '#{allName}', sentence = '#{sentence}'
+        SET clean_name = '#{allName.strip}', sentence = '#{sentence.strip}'
         WHERE id = #{id}
       "
       client.query(q)

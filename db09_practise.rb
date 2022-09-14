@@ -2,6 +2,7 @@ require 'mysql2'
 require 'dotenv/load'
 require_relative 'methods.rb'
 require_relative 'cleaning.rb'
+require_relative 'scraping.rb'
 
 client = Mysql2::Client.new(host: "db09.blockshopper.com", username: ENV['DB09_LGN'], password: ENV['DB09_PWD'], database: "applicant_tests")
 
@@ -25,8 +26,10 @@ client = Mysql2::Client.new(host: "db09.blockshopper.com", username: ENV['DB09_L
 # end
 # puts Time.now - t
 
-#cleaning_montana_district_report_card(client)
+# cleaning_montana_district_report_card(client)
 
-today(client)
+# hle_dev_test_candidates(client)
+
+scraping('https://www.cdc.gov/coronavirus/2019-ncov/covid-data/covidview/01152021/specimens-tested.html', client)
 
 client.close
